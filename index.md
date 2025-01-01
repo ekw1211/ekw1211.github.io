@@ -10,4 +10,4 @@ Test site.
 # Recent Happenings
 
 ## Presenting my work developing a surgical robotics training simulator at the Hamlyn Symposium on Medical Robotics in London, UK.
-![](1719925215099.jpg)
+<img src="1719925215099.jpg" width="300" />
