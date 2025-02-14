@@ -8,12 +8,15 @@ I am a MASc Candidate in Mechanical Engineering at the University of Toronto. My
 
 My research groups:
 
-| [![Continuum Robotics Lab](CRLab logo_dark_1_large(1).png)](https://crl.utm.utoronto.ca/) | [![Diller Microrobotics Lab](DillerLabLogo_full(1).png)](https://microrobotics.mie.utoronto.ca/) |
-|-----------------------------------------|-----------------------------------------|
+<a href="https://crl.utm.utoronto.ca/">
+    <img src="CRLab logo_dark_1_large(1).png" alt="Continuum Robotics Lab" title="Continuum Robotics Lab" width="300">
+</a>
+
+<a href="https://microrobotics.mie.utoronto.ca/">
+    <img src="DillerLabLogo_full(1).png" alt="Diller Microrobotics Lab" title="Diller Microrobotics Lab" width="300">
+</a>
 
 
-[![Continuum Robotics Lab](CRLab logo_dark_1_large(1).png)](https://crl.utm.utoronto.ca/)
-[![Diller Microrobotics Lab](DillerLabLogo_full(1).png)](https://microrobotics.mie.utoronto.ca/)
 
 
 
