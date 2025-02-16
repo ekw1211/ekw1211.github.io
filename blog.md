@@ -1,3 +1,14 @@
-Presenting my work developing a surgical robotics training simulator at the Hamlyn Symposium on Medical Robotics in London, UK.
 
-<img src="1719925107302.jpg" width="500" />
+---
+layout: default
+title: Blog
+---
+
+# Blog Test
+
+Welcome to my blog! Here you'll find posts about [Topics of Interest].
+
+## Recent Posts
+{% for post in site.posts %}
+- [{{ post.title }}]({{ post.url }}) - {{ post.date | date: "%B %d, %Y" }}
+{% endfor %}
