@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Your Name</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
+
+  <!-- marked.js for markdown parsing -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
+
+  <style>
+    /* ── Tokens ── */
+    :root {
+      --ink:        #1a1a2e;
+      --ink-soft:   #4a4a6a;
+      --accent:     #4a6fa5;
+      --accent-dim: #dce7f5;
+      --rule:       #d8dde6;
+      --bg:         #ffffff;
+      --bg-off:     #f7f8fa;
+      --font-serif: 'Lora', Georgia, serif;
+      --font-sans:  'Inter', system-ui, sans-serif;
+      --col-width:  680px;
+      --side-width: 200px;
+    }
+
+    /* ── Reset ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 17px; scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-serif);
+      color: var(--ink);
+      background: var(--bg);
+      line-height: 1.75;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Layout ── */
+    .site {
+      display: grid;
+      grid-template-columns: var(--side-width) 1fr;
+      min-height: 100vh;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      padding: 3rem 2rem 3rem 1.5rem;
+      border-right: 1px solid var(--rule);
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .sidebar-name {
+      font-family: var(--font-serif);
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--ink);
+      letter-spacing: -0.01em;
+      margin-bottom: 0.25rem;
+      line-height: 1.3;
+    }
+    .sidebar-title {
+      font-family: var(--font-sans);
+      font-size: 0.72rem;
+      color: var(--ink-soft);
+      margin-bottom: 2rem;
+      line-height: 1.4;
+    }
+    nav { display: flex; flex-direction: column; gap: 0; }
+    nav a {
+      font-family: var(--font-sans);
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--ink-soft);
+      text-decoration: none;
+      padding: 0.4rem 0;
+      border-left: 2px solid transparent;
+      padding-left: 0.75rem;
+      margin-left: -0.75rem;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    nav a:hover   { color: var(--ink); }
+    nav a.active  { color: var(--accent); border-left-color: var(--accent); }
+
+    .sidebar-links {
+      margin-top: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+    .sidebar-links a {
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      color: var(--ink-soft);
+      text-decoration: none;
+    }
+    .sidebar-links a:hover { color: var(--accent); }
+
+    /* ── Main ── */
+    .main {
+      padding: 3rem 3rem 6rem 4rem;
+      max-width: calc(var(--col-width) + 8rem);
+    }
+
+    /* ── Sections ── */
+    .section { display: none; }
+    .section.visible { display: block; }
+
+    /* ── About ── */
+    .about-header {
+      margin-bottom: 2.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--rule);
+    }
+    .about-header h1 {
+      font-size: 2rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      margin-bottom: 0.4rem;
+    }
+    .about-header .affil {
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      color: var(--ink-soft);
+    }
+    .about-body { max-width: var(--col-width); }
+    .about-body p + p { margin-top: 1rem; }
+
+    /* ── Section headings ── */
+    .page-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      margin-bottom: 2rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    /* ── Projects ── */
+    .project-list { list-style: none; display: flex; flex-direction: column; gap: 0; }
+    .project-item {
+      padding: 1.25rem 0;
+      border-bottom: 1px solid var(--rule);
+      cursor: pointer;
+    }
+    .project-item:first-child { border-top: 1px solid var(--rule); }
+    .project-meta {
+      font-family: var(--font-sans);
+      font-size: 0.72rem;
+      color: var(--ink-soft);
+      margin-bottom: 0.3rem;
+      display: flex;
+      gap: 1rem;
+    }
+    .project-item h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 0.3rem;
+    }
+    .project-item h3:hover { text-decoration: underline; }
+    .project-desc {
+      font-family: var(--font-sans);
+      font-size: 0.83rem;
+      color: var(--ink-soft);
+      line-height: 1.5;
+    }
+    .project-tags {
+      margin-top: 0.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+    .tag {
+      font-family: var(--font-sans);
+      font-size: 0.68rem;
+      color: var(--accent);
+      background: var(--accent-dim);
+      padding: 0.15rem 0.5rem;
+      border-radius: 2px;
+    }
+
+    /* ── Blog list ── */
+    .post-list { list-style: none; display: flex; flex-direction: column; }
+    .post-item {
+      padding: 1.25rem 0;
+      border-bottom: 1px solid var(--rule);
+      cursor: pointer;
+    }
+    .post-item:first-child { border-top: 1px solid var(--rule); }
+    .post-date {
+      font-family: var(--font-sans);
+      font-size: 0.72rem;
+      color: var(--ink-soft);
+      margin-bottom: 0.25rem;
+    }
+    .post-item h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 0.25rem;
+    }
+    .post-item h3:hover { text-decoration: underline; }
+    .post-desc {
+      font-family: var(--font-sans);
+      font-size: 0.83rem;
+      color: var(--ink-soft);
+      line-height: 1.5;
+    }
+
+    /* ── Markdown content view ── */
+    .content-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-family: var(--font-sans);
+      font-size: 0.8rem;
+      color: var(--ink-soft);
+      text-decoration: none;
+      margin-bottom: 2rem;
+      cursor: pointer;
+      border: none;
+      background: none;
+      padding: 0;
+    }
+    .content-back:hover { color: var(--accent); }
+
+    .md-body { max-width: var(--col-width); }
+    .md-body h1 { font-size: 1.6rem; font-weight: 600; letter-spacing: -0.015em; margin-bottom: 0.5rem; line-height: 1.25; }
+    .md-body h2 { font-size: 1.15rem; font-weight: 600; margin-top: 2rem; margin-bottom: 0.6rem; padding-top: 1.5rem; border-top: 1px solid var(--rule); }
+    .md-body h3 { font-size: 1rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.4rem; }
+    .md-body p  { margin-top: 0.9rem; }
+    .md-body p:first-child { margin-top: 0; }
+    .md-body ul, .md-body ol { margin-top: 0.75rem; padding-left: 1.5rem; }
+    .md-body li { margin-top: 0.3rem; }
+    .md-body a  { color: var(--accent); }
+    .md-body a:hover { text-decoration: none; }
+    .md-body strong { font-weight: 600; }
+    .md-body em { font-style: italic; }
+    .md-body code {
+      font-family: 'Menlo', 'Consolas', monospace;
+      font-size: 0.82em;
+      background: var(--bg-off);
+      padding: 0.1em 0.35em;
+      border-radius: 2px;
+    }
+    .md-body hr {
+      border: none;
+      border-top: 1px solid var(--rule);
+      margin: 1.5rem 0;
+    }
+    .md-meta {
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      color: var(--ink-soft);
+      margin-bottom: 1.75rem;
+      margin-top: 0.25rem;
+    }
+
+    /* ── Publications ── */
+    /* (rendered as markdown, reuses .md-body) */
+
+    /* ── Loading / error ── */
+    .state-msg {
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      color: var(--ink-soft);
+      padding: 2rem 0;
+    }
+
+    /* ── Mobile ── */
+    @media (max-width: 700px) {
+      .site { grid-template-columns: 1fr; }
+      .sidebar {
+        position: static;
+        height: auto;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1.25rem 1.25rem 0.75rem;
+        border-right: none;
+        border-bottom: 1px solid var(--rule);
+      }
+      .sidebar-title { display: none; }
+      .sidebar-links { display: none; }
+      .sidebar-name { margin-bottom: 0; }
+      nav { flex-direction: row; flex-wrap: wrap; gap: 0.15rem; }
+      nav a { padding: 0.3rem 0.6rem; margin-left: 0; border-left: none; border-bottom: 2px solid transparent; }
+      nav a.active { border-left-color: transparent; border-bottom-color: var(--accent); }
+      .main { padding: 2rem 1.25rem 4rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="site">
+
+  <!-- ── Sidebar ── -->
+  <aside class="sidebar">
+    <div class="sidebar-name">Your Name</div>
+    <div class="sidebar-title">PhD Candidate<br>Department of Computer Science<br>Your University</div>
+    <nav id="nav">
+      <a href="#about"        class="nav-link active" data-section="about">About</a>
+      <a href="#projects"     class="nav-link"        data-section="projects">Projects</a>
+      <a href="#publications" class="nav-link"        data-section="publications">Publications</a>
+      <a href="#blog"         class="nav-link"        data-section="blog">Writing</a>
+    </nav>
+    <div class="sidebar-links">
+      <a href="mailto:you@university.edu">you@university.edu</a>
+      <a href="https://github.com/yourusername" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://scholar.google.com" target="_blank" rel="noopener">Google Scholar</a>
+      <a href="/cv.pdf" target="_blank">CV (PDF)</a>
+    </div>
+  </aside>
+
+  <!-- ── Main ── -->
+  <main class="main">
+
+    <!-- About -->
+    <section id="about" class="section visible">
+      <div class="about-header">
+        <h1>Your Name</h1>
+        <div class="affil">PhD Candidate · Computer Science · Your University</div>
+      </div>
+      <div class="about-body">
+        <p>
+          I am a doctoral researcher working at the intersection of natural language processing and information retrieval.
+          My current work focuses on how large language models can be adapted for scientific literature search, with an
+          emphasis on cross-disciplinary discovery.
+        </p>
+        <p>
+          Before graduate school I worked as a research assistant at [Lab Name], where I studied [topic].
+          I hold a B.S. in Computer Science from [Undergraduate University].
+        </p>
+        <p>
+          I am advised by <a href="#">Prof. Advisor Name</a> and am affiliated with the
+          <a href="#">Language and Information Lab</a>. I am supported by [Fellowship Name].
+        </p>
+        <p>
+          Outside of research I read widely in the history and philosophy of science, and occasionally write
+          about the craft of research on this site.
+        </p>
+      </div>
+    </section>
+
+    <!-- Projects -->
+    <section id="projects" class="section">
+      <div id="projects-list-view">
+        <h2 class="page-title">Projects</h2>
+        <ul class="project-list" id="projects-list">
+          <li class="state-msg">Loading…</li>
+        </ul>
+      </div>
+      <div id="projects-detail-view" style="display:none">
+        <button class="content-back" id="projects-back">← All projects</button>
+        <div class="md-body" id="projects-content"></div>
+      </div>
+    </section>
+
+    <!-- Publications -->
+    <section id="publications" class="section">
+      <div class="md-body" id="publications-content">
+        <p class="state-msg">Loading…</p>
+      </div>
+    </section>
+
+    <!-- Blog -->
+    <section id="blog" class="section">
+      <div id="blog-list-view">
+        <h2 class="page-title">Writing</h2>
+        <ul class="post-list" id="blog-list">
+          <li class="state-msg">Loading…</li>
+        </ul>
+      </div>
+      <div id="blog-detail-view" style="display:none">
+        <button class="content-back" id="blog-back">← All posts</button>
+        <div class="md-body" id="blog-content"></div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+// ── Configuration ────────────────────────────────────────────────
+// Add entries here as you create new files.
+const PROJECTS = [
+  {
+    file: 'projects/semantic-search.md',
+    title: 'Semantic Search over Scientific Literature',
+    year: '2024',
+    status: 'Active',
+    tags: ['NLP', 'information retrieval', 'transformers'],
+    desc: 'Dense retrieval system for scientific papers using fine-tuned bi-encoders and approximate nearest-neighbor search.',
+  },
+  {
+    file: 'projects/citation-network.md',
+    title: 'Citation Network Analysis Toolkit',
+    year: '2023',
+    status: 'Complete',
+    tags: ['graph analysis', 'bibliometrics', 'Python'],
+    desc: 'Python library for constructing and analyzing citation graphs from arXiv, CrossRef, and Semantic Scholar data.',
+  },
+];
+
+const POSTS = [
+  {
+    file: 'posts/on-research-taste.md',
+    title: 'On Developing Research Taste',
+    date: '2024-11-12',
+    desc: 'Some thoughts on how to find problems worth working on.',
+  },
+  {
+    file: 'posts/writing-clearly.md',
+    title: 'Writing Clearly About Hard Things',
+    date: '2024-08-03',
+    desc: 'Clear writing is a form of respect for the reader.',
+  },
+];
+
+// ── Markdown helpers ─────────────────────────────────────────────
+function stripFrontmatter(text) {
+  return text.replace(/^---[\s\S]*?---\n?/, '');
+}
+
+async function loadMd(path) {
+  const res = await fetch(path);
+  if (!res.ok) throw new Error(`Could not load ${path}`);
+  return res.text();
+}
+
+// ── Date formatting ──────────────────────────────────────────────
+function fmtDate(iso) {
+  const [y, m, d] = iso.split('-');
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return `${months[+m - 1]} ${+d}, ${y}`;
+}
+
+// ── Router ───────────────────────────────────────────────────────
+const sections = ['about','projects','publications','blog'];
+
+function showSection(id) {
+  sections.forEach(s => {
+    document.getElementById(s).classList.toggle('visible', s === id);
+  });
+  document.querySelectorAll('.nav-link').forEach(a => {
+    a.classList.toggle('active', a.dataset.section === id);
+  });
+  // Reset detail views
+  showProjectsList();
+  showBlogList();
+}
+
+// Handle nav clicks and hash
+document.querySelectorAll('.nav-link').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const sec = a.dataset.section;
+    history.pushState({}, '', `#${sec}`);
+    showSection(sec);
+    if (sec === 'publications') loadPublications();
+    if (sec === 'projects') renderProjectsList();
+    if (sec === 'blog') renderBlogList();
+  });
+});
+
+window.addEventListener('popstate', () => {
+  const sec = location.hash.slice(1) || 'about';
+  showSection(sec);
+});
+
+// ── Projects ─────────────────────────────────────────────────────
+function renderProjectsList() {
+  const list = document.getElementById('projects-list');
+  list.innerHTML = PROJECTS.map((p, i) => `
+    <li class="project-item" data-idx="${i}">
+      <div class="project-meta">
+        <span>${p.year}</span>
+        <span>${p.status}</span>
+      </div>
+      <h3>${p.title}</h3>
+      <p class="project-desc">${p.desc}</p>
+      <div class="project-tags">${p.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
+    </li>
+  `).join('');
+
+  list.querySelectorAll('.project-item').forEach(el => {
+    el.addEventListener('click', () => openProject(+el.dataset.idx));
+  });
+}
+
+async function openProject(idx) {
+  const p = PROJECTS[idx];
+  document.getElementById('projects-list-view').style.display = 'none';
+  document.getElementById('projects-detail-view').style.display = 'block';
+  const el = document.getElementById('projects-content');
+  el.innerHTML = '<p class="state-msg">Loading…</p>';
+  try {
+    const raw = await loadMd(p.file);
+    el.innerHTML = marked.parse(stripFrontmatter(raw));
+  } catch {
+    el.innerHTML = '<p class="state-msg">Could not load project file.</p>';
+  }
+}
+
+function showProjectsList() {
+  document.getElementById('projects-list-view').style.display = '';
+  document.getElementById('projects-detail-view').style.display = 'none';
+}
+
+document.getElementById('projects-back').addEventListener('click', showProjectsList);
+
+// ── Publications ──────────────────────────────────────────────────
+let pubsLoaded = false;
+async function loadPublications() {
+  if (pubsLoaded) return;
+  const el = document.getElementById('publications-content');
+  try {
+    const raw = await loadMd('publications/publications.md');
+    el.innerHTML = marked.parse(stripFrontmatter(raw));
+    pubsLoaded = true;
+  } catch {
+    el.innerHTML = '<p class="state-msg">Could not load publications.</p>';
+  }
+}
+
+// ── Blog ─────────────────────────────────────────────────────────
+function renderBlogList() {
+  const list = document.getElementById('blog-list');
+  const sorted = [...POSTS].sort((a, b) => b.date.localeCompare(a.date));
+  list.innerHTML = sorted.map((p, i) => `
+    <li class="post-item" data-idx="${POSTS.indexOf(p)}">
+      <div class="post-date">${fmtDate(p.date)}</div>
+      <h3>${p.title}</h3>
+      <p class="post-desc">${p.desc}</p>
+    </li>
+  `).join('');
+
+  list.querySelectorAll('.post-item').forEach(el => {
+    el.addEventListener('click', () => openPost(+el.dataset.idx));
+  });
+}
+
+async function openPost(idx) {
+  const p = POSTS[idx];
+  document.getElementById('blog-list-view').style.display = 'none';
+  document.getElementById('blog-detail-view').style.display = 'block';
+  const el = document.getElementById('blog-content');
+  el.innerHTML = '<p class="state-msg">Loading…</p>';
+  try {
+    const raw = await loadMd(p.file);
+    el.innerHTML = `
+      <h1>${p.title}</h1>
+      <div class="md-meta">${fmtDate(p.date)}</div>
+      ${marked.parse(stripFrontmatter(raw))}
+    `;
+  } catch {
+    el.innerHTML = '<p class="state-msg">Could not load post.</p>';
+  }
+}
+
+function showBlogList() {
+  document.getElementById('blog-list-view').style.display = '';
+  document.getElementById('blog-detail-view').style.display = 'none';
+}
+
+document.getElementById('blog-back').addEventListener('click', showBlogList);
+
+// ── Init ──────────────────────────────────────────────────────────
+(function init() {
+  const hash = location.hash.slice(1);
+  const sec = sections.includes(hash) ? hash : 'about';
+  showSection(sec);
+  renderProjectsList();
+  renderBlogList();
+  if (sec === 'publications') loadPublications();
+})();
+</script>
+</body>
+</html>
