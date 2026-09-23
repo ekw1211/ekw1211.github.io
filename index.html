@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Ella Walsh</title>
+  <!-- base ensures relative fetch() paths resolve from the repo root on GitHub Pages -->
+  <base href="./">
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
@@ -480,6 +482,7 @@ document.querySelectorAll('.nav-link').forEach(a => {
 window.addEventListener('popstate', () => {
   const sec = location.hash.slice(1) || 'about';
   showSection(sec);
+  if (sec === 'publications') loadPublications();
 });
 
 // ── Projects ─────────────────────────────────────────────────────
@@ -524,16 +527,20 @@ function showProjectsList() {
 document.getElementById('projects-back').addEventListener('click', showProjectsList);
 
 // ── Publications ──────────────────────────────────────────────────
+// Fetched from publications/publications.md — edit that file directly.
 let pubsLoaded = false;
 async function loadPublications() {
   if (pubsLoaded) return;
   const el = document.getElementById('publications-content');
+  el.innerHTML = '<p class="state-msg">Loading…</p>';
   try {
-    const raw = await loadMd('publications/publications.md');
+    const res = await fetch('publications/publications.md');
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const raw = await res.text();
     el.innerHTML = marked.parse(stripFrontmatter(raw));
     pubsLoaded = true;
-  } catch {
-    el.innerHTML = '<p class="state-msg">Could not load publications.</p>';
+  } catch (err) {
+    el.innerHTML = `<p class="state-msg">Could not load publications.md (${err.message}). Make sure the file exists in the <code>publications/</code> folder and the site is served over HTTP.</p>`;
   }
 }
 
