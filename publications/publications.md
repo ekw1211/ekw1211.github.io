@@ -41,9 +41,9 @@ Arion Law, Ella Walsh, James Drake, Tim Van Mieghem, Thomas Looi
 *Proceedings of FMF 20th World Conference in Fetal Medicine*, 2023.
 [PDF](#) · [DOI](https://www.fetalmedicine.org/data/2023/var/pdf/abstracts/2023/04701.pdf)
 
----
+<!-- ---
 
-## Preprints
+## Preprints -->
 
 <!-- **Toward Retrieval-Augmented Literature Review**
 Your Name
